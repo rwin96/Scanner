@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LexicalAnalyzer {
-
+    SymbolTable symbolTable = new SymbolTable();
     public void scan(ArrayList<List<Character>> fileReaderOutput) {
 
         String string = "";
@@ -16,7 +16,7 @@ public class LexicalAnalyzer {
 
                 char ch = line.get(i);
 
-                if (true/*isOneOrTwoCharToken(ch)*/) {
+                if (symbolTable.isOneOrTwoCharToken(ch)) {
                     //check in the symbols
 
                     if (ch == '<') {
