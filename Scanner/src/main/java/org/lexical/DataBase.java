@@ -39,8 +39,7 @@ public class DataBase {
      * Delete all saved data from past with this method
      */
     public void deleteAllSavedTokens() {
-        if (statement == null)
-            connection();
+        if (statement == null) connection();
 
         try {
             getStatement().execute("DELETE FROM Code_Tokens;");
@@ -50,7 +49,6 @@ public class DataBase {
     }
 
     /**
-     *
      * @return statement
      */
     public Statement getStatement() {
