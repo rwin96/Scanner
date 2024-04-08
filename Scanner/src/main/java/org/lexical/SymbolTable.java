@@ -16,7 +16,7 @@ public class SymbolTable {
     private final DataBase dataBase;
     private List<Character> oneOrTwoCharTokensList;
 
-    public SymbolTable() {
+    private SymbolTable() {
         table = new HashMap<>();
         dataBase = new DataBase();
         generateTables();
