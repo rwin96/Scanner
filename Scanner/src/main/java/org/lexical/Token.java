@@ -2,14 +2,14 @@ package org.lexical;
 
 public class Token {
     private String category;
-    private String lexim;
+    private String lexeme;
     private String scope = "main";
     private int line;
     private String value;
 
-    public Token(String category, String lexim, int line) {
+    public Token(String category, String lexeme, int line) {
         this.category = category;
-        this.lexim = lexim;
+        this.lexeme = lexeme;
         this.line = line;
     }
 
@@ -21,12 +21,12 @@ public class Token {
         this.category = category;
     }
 
-    public String getLexim() {
-        return lexim;
+    public String getLexeme() {
+        return lexeme;
     }
 
-    public void setLexim(String lexim) {
-        this.lexim = lexim;
+    public void setLexeme(String lexeme) {
+        this.lexeme = lexeme;
     }
 
     public String getScope() {

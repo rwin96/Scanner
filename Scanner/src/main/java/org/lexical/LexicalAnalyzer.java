@@ -2,10 +2,20 @@ package org.lexical;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class LexicalAnalyzer {
-    SymbolTable symbolTable = new SymbolTable();
+    SymbolTable symbolTable = SymbolTable.getInstance();
+    TokenCreator tokenCreator = TokenCreator.getInstance();
+
     public void scan(ArrayList<List<Character>> fileReaderOutput) {
+
+        List<Token> tokenList = new ArrayList<>();
+        Token token = null;
+
+        Stack<String> scopeStack = new Stack<>();
+        scopeStack.push("main");
+        int scopeCounter = 1;
 
         String string = "";
         boolean insideQ = false;
@@ -21,129 +31,122 @@ public class LexicalAnalyzer {
 
                     if (ch == '<') {
                         if (nextChar(line, line.indexOf('<')) == '=') {
+
                             string = "<=";
-                            // Relational_op
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
                         } else if (nextChar(line, line.indexOf('<')) == '<') {
                             string = "<<";
-                            // Special_Op
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "<";
-                            //comp_OP
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                         }
 
                     } else if (ch == '=') {
 
                         if (nextChar(line, line.indexOf('=')) == '=') {
+
                             string = "==";
-                            //equal
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "=";
-                            //assignment
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                         }
 
                     } else if (ch == '>') {
 
                         if (nextChar(line, line.indexOf('>')) == '=') {
+
                             string = ">=";
-                            //relational_OP
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
 
                         } else if (nextChar(line, line.indexOf('>')) == '>') {
+
                             string = ">>";
-                            // specail_OP
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
 
                         } else {
                             string = ">";
-                            // com_OP
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                         }
                     } else if (ch == '+') {
                         if (nextChar(line, line.indexOf('+')) == '+') {
                             string = "++";
-                            //increment
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "+";
-                            //plus
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                         }
                     } else if (ch == '-') {
                         if (nextChar(line, line.indexOf('-')) == '-') {
                             string = "--";
-                            //decrement
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "-";
-                            //minus
-                            //Rwin
+                            token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                         }
                     } else if (ch == '/') {
                         string = "/";
-                        //divide
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '*') {
                         string = "*";
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '%') {
                         string = "%";
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '[') {
                         string = "[";
-                        //Open_bracket
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == ']') {
                         string = "]";
-                        //Close_bracket
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '(') {
                         string = "(";
-                        //Open_parantess
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == ')') {
                         string = ")";
-                        //Close_parantes
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '{') {
                         string = "{";
-                        //Open_curly_brace
-                        //Rwin
+                        scopeStack.push("main-loop-" + scopeCounter);
+                        scopeCounter++;
+
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '}') {
                         string = "}";
-                        //Close_curly_brace
-                        //Rwin
+                        scopeStack.pop();
+
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == '"') {
+
                         String literal = "";
                         insideQ = true;
                         StringBuilder stringBuilder = new StringBuilder();
@@ -154,16 +157,18 @@ public class LexicalAnalyzer {
                             stringBuilder.append(line.get(j));
                             j++;
                         }
-                        literal = stringBuilder.toString(); // -->Rwin
+                        literal = stringBuilder.toString();
+
+                        token = tokenCreator.createLiteralToken(literal, i, scopeStack.peek());
 
 
                     } else if (ch == '\'') {
-                        string = "\'";
-                        //Rwin
+                        string = "'";
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     } else if (ch == ';') {
                         string = ";";
-                        //Rwin
+                        token = tokenCreator.createToken(string, i, scopeStack.peek());
 
                     }
 
@@ -181,7 +186,8 @@ public class LexicalAnalyzer {
                             stringBuilder.append(nextChar(line, line.indexOf(ch)));
                             i++;
                         }
-                        //Rwin
+
+                        token = tokenCreator.createToken(stringBuilder.toString(), i, scopeStack.peek());
 
                     } else {
 
@@ -193,13 +199,13 @@ public class LexicalAnalyzer {
                             i++;
 
                         }
-                        //Rwin
+                        token = tokenCreator.createToken(stringBuilder.toString(), i, scopeStack.peek());
                     }
 
 
                 }
 
-
+                tokenList.add(token);
             }
 
 
@@ -215,8 +221,6 @@ public class LexicalAnalyzer {
 
         return ch;
     }
-
-
 
 
 }

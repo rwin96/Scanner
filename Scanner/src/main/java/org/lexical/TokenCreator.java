@@ -39,12 +39,12 @@ public class TokenCreator {
     }
 
 
-    public Token createToken(String lexim, int line) {
+    public Token createToken(String lexeme, int line) {
         Token newToken;
-        if (symbolTable.getTable().get(lexim) != null)
-            newToken = new Token(symbolTable.getTable().get(lexim), lexim, line);
+        if (symbolTable.getTable().get(lexeme) != null)
+            newToken = new Token(symbolTable.getTable().get(lexeme), lexeme, line);
         else
-            newToken = new Token("Identifier", lexim, line);
+            newToken = new Token("Identifier", lexeme, line);
 
         if (!isSaved(newToken))
             savedTokensList.add(newToken);
@@ -52,12 +52,12 @@ public class TokenCreator {
         return newToken;
     }
 
-    public Token createToken(String lexim, int line, String scope) {
+    public Token createToken(String lexeme, int line, String scope) {
         Token newToken;
-        if (symbolTable.getTable().get(lexim) != null)
-            newToken = new Token(symbolTable.getTable().get(lexim), lexim, line);
+        if (symbolTable.getTable().get(lexeme) != null)
+            newToken = new Token(symbolTable.getTable().get(lexeme), lexeme, line);
         else
-            newToken = new Token("Identifier", lexim, line);
+            newToken = new Token("Identifier", lexeme, line);
 
         newToken.setScope(scope);
         if (!isSaved(newToken))
@@ -68,7 +68,7 @@ public class TokenCreator {
 
     private boolean isSaved(Token token) {
         for (Token tmp : savedTokensList) {
-            if (tmp.getLexim().equals(token.getLexim()) && tmp.getScope().equals(token.getScope()))
+            if (tmp.getLexeme().equals(token.getLexeme()) && tmp.getScope().equals(token.getScope()))
                 return true;
         }
         return false;
