@@ -1,27 +1,35 @@
 package org.lexical;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TextFileReader {
-    public static void main(String[] args) {
-        File myfile = new File("input.txt");
-        List<char[]> linesList = readLinesFromFile(myfile);
-        printLines(linesList);
+    private ArrayList<List<Character>> linesList;
+
+    public TextFileReader(String fileName) {
+        File myfile = new File(fileName);
+        linesList = readLinesFromFile(myfile);
     }
 
-    private static List<char[]> readLinesFromFile(File file) {
-        List<char[]> linesList = new ArrayList<>();
+    private static ArrayList<List<Character>> readLinesFromFile(File file) {
+        ArrayList<List<Character>> linesList = new ArrayList<>();
         try {
             BufferedReader buf = new BufferedReader(new FileReader(file));
             String line;
-            while (( line = buf.readLine() ) != null) {
+            while ((line = buf.readLine()) != null) {
                 char[] characters = line.toCharArray();
-                linesList.add(characters);
+
+                List<Character> characterList = new ArrayList<>();
+                for (char c : characters) {
+                    characterList.add(c);
+                }
+
+                linesList.add(characterList);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,6 +43,10 @@ public class TextFileReader {
             }
 
         }
+    }
+
+    public ArrayList<List<Character>> getLinesList() {
+        return linesList;
     }
 }
 
