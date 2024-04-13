@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Stack;
 
 public class LexicalAnalyzer {
-    SymbolTable symbolTable = SymbolTable.getInstance();
-    TokenCreator tokenCreator = TokenCreator.getInstance();
+    private static final SymbolTable symbolTable = SymbolTable.getInstance();
+    private static final TokenCreator tokenCreator = TokenCreator.getInstance();
 
-    public void scan(ArrayList<List<Character>> fileReaderOutput) {
+    public static void scan(ArrayList<List<Character>> fileReaderOutput) {
 
         List<Token> tokenList = new ArrayList<>();
         Token token = null;
@@ -215,7 +215,7 @@ public class LexicalAnalyzer {
     }
 
 
-    public char nextChar(List<Character> list, int index) {
+    private static char nextChar(List<Character> list, int index) {
 
         char ch = list.get(index + 1);
 
