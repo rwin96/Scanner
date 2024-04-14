@@ -1,26 +1,23 @@
 int n;
-    
-    write << "تعداد اعداد را وارد کنید: ";
-    read >> n;
-    
-    write << "لطفاً " << n << " عدد وارد کنید:" << endl;
-    loop (int i = 0; i < n; ++i) {
-        int num;
-        read >> num;
-        write << "عدد وارد شده: " << num << endl;
-    }
-    
-    int even_count = 0;
-    int odd_count = 0;
-    loop (int i = 0; i < n; ++i) {
-        int num;
-        read >> num;
-        if (num % 2 == 0) {
-            even_count++;
-        } so {
-            odd_count++;
-        }
-    }
-    
-    write << "تعداد اعداد زوج: " << even_count << endl;
-    write << "تعداد اعداد فرد: " << odd_count << endl;
+
+write << "Enter number ";
+read >> n;
+write << "Please enter " << n << " number: " << endl;
+loop (int i = 0; i < n; ++i) {
+int num;
+read >> num;
+write << "Input number: " << num << endl;
+}
+int even_count = 0;
+int odd_count = 0;
+loop (int i = 0; i < n; ++i) {
+int num;
+read >> num;
+if (num % 2 == 0) {
+even_count++;
+} so {
+odd_count++;
+}
+}
+write << "number of even numbers: " << even_count << endl;
+write << "number of odd numbers: " << odd_count << endl;
