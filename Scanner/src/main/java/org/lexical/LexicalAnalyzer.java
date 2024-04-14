@@ -8,7 +8,7 @@ public class LexicalAnalyzer {
     private static final SymbolTable symbolTable = SymbolTable.getInstance();
     private static final TokenCreator tokenCreator = TokenCreator.getInstance();
 
-    public static void scan(ArrayList<List<Character>> fileReaderOutput) {
+    public static List<Token> scan(ArrayList<List<Character>> fileReaderOutput) {
 
         List<Token> tokenList = new ArrayList<>();
         Token token = null;
@@ -21,10 +21,14 @@ public class LexicalAnalyzer {
         boolean insideQ = false;
 
         for (List<Character> line : fileReaderOutput) {
+            int lineNumber = fileReaderOutput.indexOf(line) + 1;
 
             for (int i = 0; i < line.size(); i++) {
 
                 char ch = line.get(i);
+
+                if (ch == ' ')
+                    continue;
 
                 if (symbolTable.isOneOrTwoCharToken(ch)) {
                     //check in the symbols
@@ -33,17 +37,17 @@ public class LexicalAnalyzer {
                         if (nextChar(line, line.indexOf('<')) == '=') {
 
                             string = "<=";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
                         } else if (nextChar(line, line.indexOf('<')) == '<') {
                             string = "<<";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "<";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                         }
 
@@ -52,12 +56,12 @@ public class LexicalAnalyzer {
                         if (nextChar(line, line.indexOf('=')) == '=') {
 
                             string = "==";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "=";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                         }
 
@@ -66,109 +70,113 @@ public class LexicalAnalyzer {
                         if (nextChar(line, line.indexOf('>')) == '=') {
 
                             string = ">=";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
 
                         } else if (nextChar(line, line.indexOf('>')) == '>') {
 
                             string = ">>";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
 
                         } else {
                             string = ">";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                         }
                     } else if (ch == '+') {
                         if (nextChar(line, line.indexOf('+')) == '+') {
                             string = "++";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "+";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                         }
                     } else if (ch == '-') {
                         if (nextChar(line, line.indexOf('-')) == '-') {
                             string = "--";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                             i++;
 
                         } else {
                             string = "-";
-                            token = tokenCreator.createToken(string, i, scopeStack.peek());
+                            token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                         }
                     } else if (ch == '/') {
                         string = "/";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '*') {
                         string = "*";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '%') {
                         string = "%";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '[') {
                         string = "[";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == ']') {
                         string = "]";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '(') {
                         string = "(";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == ')') {
                         string = ")";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '{') {
                         string = "{";
                         scopeStack.push("main-loop-" + scopeCounter);
                         scopeCounter++;
 
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '}') {
                         string = "}";
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
                         scopeStack.pop();
 
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
-
                     } else if (ch == '"') {
+                        token = tokenCreator.createToken("\"", lineNumber, scopeStack.peek());
+                        tokenList.add(token);
 
-                        String literal = "";
-                        insideQ = true;
+                        String literal;
                         StringBuilder stringBuilder = new StringBuilder();
 
-                        int j = i++;
+                        i++;
 
-                        while (j < line.size() && line.get(j) != '"') {
-                            stringBuilder.append(line.get(j));
-                            j++;
+                        while (i < line.size()) {
+                            char temp = line.get(i);
+                            if (temp == '"')
+                                break;
+
+                            stringBuilder.append(temp);
+                            i++;
                         }
                         literal = stringBuilder.toString();
 
-                        token = tokenCreator.createLiteralToken(literal, i, scopeStack.peek());
+                        token = tokenCreator.createLiteralToken(literal, lineNumber, scopeStack.peek());
 
 
                     } else if (ch == '\'') {
                         string = "'";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string,lineNumber, scopeStack.peek());
 
                     } else if (ch == ';') {
                         string = ";";
-                        token = tokenCreator.createToken(string, i, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     }
 
@@ -181,43 +189,47 @@ public class LexicalAnalyzer {
 
                         stringBuilder.append(ch);
 
-                        while (Character.isDigit(nextChar(line, line.indexOf(ch)))) {
+                        while (Character.isDigit(nextChar(line, i))) {
 
-                            stringBuilder.append(nextChar(line, line.indexOf(ch)));
+                            stringBuilder.append(nextChar(line, i));
                             i++;
                         }
 
-                        token = tokenCreator.createToken(stringBuilder.toString(), i, scopeStack.peek());
+                        token = tokenCreator.createToken(stringBuilder.toString(), lineNumber, scopeStack.peek());
 
                     } else {
-
                         stringBuilder.append(ch);
-                        char nextChar = nextChar(line, line.indexOf(ch));
+                        char nextChar = nextChar(line, i);
                         while (Character.isLetterOrDigit(nextChar) || nextChar == '_' || nextChar == '$') {
 
                             stringBuilder.append(nextChar);
                             i++;
+                            nextChar = nextChar(line, i);
 
                         }
-                        token = tokenCreator.createToken(stringBuilder.toString(), i, scopeStack.peek());
-                    }
 
+                        token = tokenCreator.createToken(stringBuilder.toString(), lineNumber, scopeStack.peek());
+                    }
 
                 }
 
                 tokenList.add(token);
             }
 
-
         }
 
-
+        return tokenList;
     }
 
 
     private static char nextChar(List<Character> list, int index) {
+        char ch;
 
-        char ch = list.get(index + 1);
+        try {
+            ch = list.get(index + 1);
+        } catch (IndexOutOfBoundsException e) {
+            ch = '^';
+        }
 
         return ch;
     }
