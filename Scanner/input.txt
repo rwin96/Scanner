@@ -1,6 +1,5 @@
 int n;
-
-write << "Enter number ";
+write << "Enter number :";
 read >> n;
 write << "Please enter " << n << " number: " << endl;
 loop (int i = 0; i < n; ++i) {
