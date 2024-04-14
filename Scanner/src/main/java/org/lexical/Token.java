@@ -55,6 +55,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return "<" + category + " , " + lexeme + '>';
+        return "< " + category + " , " + lexeme + " >";
     }
 }
