@@ -1,18 +1,18 @@
 package org.lexical;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TokenCreator {
+    private static final DataBase dataBase = new DataBase();
     private static TokenCreator instance;
-    private final DataBase dataBase;
     private final SymbolTable symbolTable;
     private List<Token> savedTokensList;
 
     private TokenCreator() {
         savedTokensList = new ArrayList<>();
-        dataBase = new DataBase();
         symbolTable = SymbolTable.getInstance();
     }
 
@@ -22,6 +22,15 @@ public class TokenCreator {
         return instance;
     }
 
+    public static void updateSavedTokensDB(List<Token> savedTokensList) {
+        for (Token tk : savedTokensList) {
+            try {
+                dataBase.getStatement().executeUpdate("INSERT INTO Code_Tokens(category, lexeme, line, scope) VALUES ('" + tk.getCategory() + "', '" + tk.getLexeme() + "', " + tk.getLine() + ", '" + tk.getScope() + "');");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public Token createLiteralToken(String literal, int line) {
         Token newToken = new Token("literal", literal, line);
@@ -37,7 +46,6 @@ public class TokenCreator {
 
         return newToken;
     }
-
 
     public Token createToken(String lexeme, int line) {
         Token newToken;
@@ -56,9 +64,12 @@ public class TokenCreator {
         Token newToken;
         if (symbolTable.getTable().get(lexeme) != null)
             newToken = new Token(symbolTable.getTable().get(lexeme), lexeme, line);
-        else
-            newToken = new Token("Identifier", lexeme, line);
-
+        else {
+            if (Character.isDigit(lexeme.charAt(0)))
+                newToken = new Token("Number", lexeme, line);
+            else
+                newToken = new Token("Identifier", lexeme, line);
+        }
         newToken.setScope(scope);
         if (!isSaved(newToken))
             savedTokensList.add(newToken);
@@ -72,10 +83,6 @@ public class TokenCreator {
                 return true;
         }
         return false;
-    }
-
-    public void updateSavedTokensDB() {
-        //TODO: save to db
     }
 
 }
