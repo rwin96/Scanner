@@ -20,9 +20,9 @@ public class LexicalAnalyzer {
         String string = "";
         boolean insideQ = false;
 
+        int lineNumber = 0;
         for (List<Character> line : fileReaderOutput) {
-            int lineNumber = fileReaderOutput.indexOf(line) + 1;
-
+            lineNumber++;
             for (int i = 0; i < line.size(); i++) {
 
                 char ch = line.get(i);
@@ -172,7 +172,7 @@ public class LexicalAnalyzer {
 
                     } else if (ch == '\'') {
                         string = "'";
-                        token = tokenCreator.createToken(string,lineNumber, scopeStack.peek());
+                        token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == ';') {
                         string = ";";
