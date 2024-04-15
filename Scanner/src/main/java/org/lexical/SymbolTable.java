@@ -19,8 +19,8 @@ public class SymbolTable {
     private SymbolTable() {
         table = new HashMap<>();
         dataBase = new DataBase();
-        generateTables();
         dataBase.deleteAllSavedTokens();
+        generateTables();
     }
 
     /**
@@ -57,6 +57,14 @@ public class SymbolTable {
         for (String tmp : table.keySet()) {
             if (!Character.isLetterOrDigit(tmp.charAt(0)))
                 oneOrTwoCharTokensList.add(tmp.charAt(0));
+        }
+
+        // create Code_Tokens table
+        try {
+            dataBase.getStatement().execute("CREATE TABLE Code_Tokens (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, lexeme TEXT, value TEXT, line INTEGER, scope TEXT)");
+            System.out.println("Code_Tokens table created.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }
