@@ -42,7 +42,7 @@ public class DataBase {
         if (statement == null) connection();
 
         try {
-            getStatement().execute("DELETE FROM Code_Tokens;");
+            getStatement().execute("DROP TABLE Code_Tokens;");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
