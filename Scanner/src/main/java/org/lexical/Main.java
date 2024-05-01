@@ -13,6 +13,6 @@ public class Main {
         }
         System.out.println(tokenList.size());
 
-        TokenCreator.updateSavedTokensDB(tokenList);
+        TokenCreator.updateSavedTokensDB();
     }
 }

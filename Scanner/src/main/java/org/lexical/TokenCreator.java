@@ -9,7 +9,7 @@ public class TokenCreator {
     private static final DataBase dataBase = new DataBase();
     private static TokenCreator instance;
     private final SymbolTable symbolTable;
-    private List<Token> savedTokensList;
+    private static List<Token> savedTokensList;
 
     private TokenCreator() {
         savedTokensList = new ArrayList<>();
@@ -22,7 +22,7 @@ public class TokenCreator {
         return instance;
     }
 
-    public static void updateSavedTokensDB(List<Token> savedTokensList) {
+    public static void updateSavedTokensDB() {
         for (Token tk : savedTokensList) {
             try {
                 dataBase.getStatement().executeUpdate("INSERT INTO Code_Tokens(category, lexeme, line, scope) VALUES ('" + tk.getCategory() + "', '" + tk.getLexeme() + "', " + tk.getLine() + ", '" + tk.getScope() + "');");

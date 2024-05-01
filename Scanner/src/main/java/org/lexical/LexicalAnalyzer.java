@@ -138,9 +138,6 @@ public class LexicalAnalyzer {
 
                     } else if (ch == '{') {
                         string = "{";
-                        scopeStack.push("main-loop-" + scopeCounter);
-                        scopeCounter++;
-
                         token = tokenCreator.createToken(string, lineNumber, scopeStack.peek());
 
                     } else if (ch == '}') {
@@ -207,6 +204,12 @@ public class LexicalAnalyzer {
                             nextChar = nextChar(line, i);
 
                         }
+
+                        if (stringBuilder.toString().equalsIgnoreCase("loop"))
+                            scopeStack.push("main-loop-" + scopeCounter++);
+
+                        if (stringBuilder.toString().equalsIgnoreCase("if") || stringBuilder.toString().equalsIgnoreCase("so"))
+                            scopeStack.push("main-loop-" + (scopeCounter - 1));
 
                         token = tokenCreator.createToken(stringBuilder.toString(), lineNumber, scopeStack.peek());
                     }
